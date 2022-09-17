@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from layers.detection import Detect
 from torchvision.models import vgg16_bn
-from layers.rainbow_module import RainbowModule
+from layers.rainbow_module import RainbowModule300
 
 
 class RSSD(nn.Module):
@@ -203,7 +203,7 @@ def build_RSSD(mode,
     extras = get_extras(config=extras_config[str(new_size)],
                         in_channels=1024)
 
-    rainbow_layers = RainbowModule()
+    rainbow_layers = RainbowModule300()
 
     head = multibox(config=str(new_size),
                     class_count=class_count)

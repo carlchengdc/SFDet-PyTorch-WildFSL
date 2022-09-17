@@ -6,7 +6,7 @@ from layers.l2_norm import L2Norm
 from utils.init import xavier_init
 from layers.detection import Detect
 from torchvision.models import vgg16_bn
-from layers.rainbow_module import RainbowModule
+from layers.rainbow_module import RainbowModule300
 
 
 class RSSDv2(nn.Module):
@@ -216,7 +216,7 @@ def build_RSSDv2(mode,
     extras = get_extras(config=extras_config[str(new_size)],
                         in_channels=1024)
 
-    rainbow_layers = RainbowModule()
+    rainbow_layers = RainbowModule300()
 
     head = multibox(config=mbox_config[str(new_size)],
                     base=base,

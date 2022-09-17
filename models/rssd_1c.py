@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from layers.detection import Detect
 from torchvision.models import vgg16_bn
-from layers.rainbow_module import RainbowModule
+from layers.rainbow_module import RainbowModule300, RainbowModule512
 
 
 class RSSD_1C(nn.Module):
@@ -138,13 +138,19 @@ def get_extras(config, in_channels, batch_norm=False):
     return layers
 
 
-def multibox(class_count):
+def multibox(class_count,
+             new_size):
 
-    class_layer = nn.Conv2d(in_channels=2816,
+    if new_size == 300:
+        in_channels = 2816
+    elif new_size == 512:
+        in_channels = 3072
+
+    class_layer = nn.Conv2d(in_channels=in_channels,
                             out_channels=6 * class_count,
                             kernel_size=3,
                             padding=1)
-    loc_layer = nn.Conv2d(in_channels=2816,
+    loc_layer = nn.Conv2d(in_channels=in_channels,
                           out_channels=6 * 4,
                           kernel_size=3,
                           padding=1)
@@ -197,9 +203,13 @@ def build_RSSD_1C(mode,
     extras = get_extras(config=extras_config[str(new_size)],
                         in_channels=1024)
 
-    rainbow_layers = RainbowModule()
+    if new_size == 300:
+        rainbow_layers = RainbowModule300()
+    elif new_size == 512:
+        rainbow_layers = RainbowModule512()
 
-    head = multibox(class_count=class_count)
+    head = multibox(class_count=class_count,
+                    new_size=new_size)
 
     return RSSD_1C(mode,
                    base,
