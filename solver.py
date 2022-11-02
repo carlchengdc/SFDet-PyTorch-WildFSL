@@ -60,7 +60,8 @@ class Solver(object):
         anchor_boxes = AnchorBox(new_size=self.new_size,
                                  config=self.anchor_config,
                                  scale_initial=self.scale_initial,
-                                 scale_min=self.scale_min)
+                                 scale_min=self.scale_min,
+                                 scale_max=self.scale_max)
         self.anchor_boxes = anchor_boxes.get_boxes()
 
         if torch.cuda.is_available() and self.use_gpu:

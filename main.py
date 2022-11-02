@@ -101,9 +101,9 @@ if __name__ == '__main__':
     # dataset info
     parser.add_argument('--input_channels', type=int, default=3,
                         help='Number of input channels')
-    parser.add_argument('--class_count', type=int, default=81,
+    parser.add_argument('--class_count', type=int, default=21,
                         help='Number of classes in dataset')
-    parser.add_argument('--dataset', type=str, default='coco',
+    parser.add_argument('--dataset', type=str, default='voc',
                         choices=['voc', 'coco'],
                         help='Dataset to use')
     parser.add_argument('--new_size', type=int, default=300,
@@ -112,14 +112,16 @@ if __name__ == '__main__':
                         help='Mean values of the dataset')
     parser.add_argument('--anchor_config', type=str, default='SFDet-300',
                         choices=['SSD-300', 'SSD-512',
-                                 'RSSD-300'
+                                 'RSSD-300', 'RSSD-512'
                                  'STDN-300',
                                  'SFDet-300', 'SFDet-512'],
                         help='Anchor box configuration to use')
-    parser.add_argument('--scale_initial', type=float, default=0.07,
+    parser.add_argument('--scale_initial', type=float, default=0.1,  # .07 COCO
                         help='Initial scale of anchor boxes')
-    parser.add_argument('--scale_min', type=int, default=0.15,
+    parser.add_argument('--scale_min', type=int, default=0.2,  # .15 COCO
                         help='Minimum scale of anchor boxes in generation')
+    parser.add_argument('--scale_max', type=int, default=1.05,  # 1.05 COCO
+                        help='Maximum scale of anchor boxes in generation')
 
     # training settings
     parser.add_argument('--lr', type=float, default=0.001,
@@ -141,7 +143,7 @@ if __name__ == '__main__':
                         help='Batch size multiplier')
 
     # architecture settings
-    parser.add_argument('--model', type=str, default='SFDet-ResNet',
+    parser.add_argument('--model', type=str, default='SFDet-VGG',
                         choices=['SFDet-VGG', 'SFDet-ResNet',
                                  'SFDet-DenseNet', 'SFDet-ResNeXt',
                                  'SSD', 'RSSD_1C', 'RSSD', 'STDN', 'STDN2'],
