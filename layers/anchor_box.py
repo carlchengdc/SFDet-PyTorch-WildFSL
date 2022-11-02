@@ -35,7 +35,8 @@ class AnchorBox(object):
                  new_size,
                  config,
                  scale_initial,
-                 scale_min):
+                 scale_min,
+                 scale_max):
         """Class constructor for AnchorBox
 
         Arguments:
@@ -54,7 +55,8 @@ class AnchorBox(object):
         self.aspect_ratios = anchors_config[config][2]
 
         self.scales = self.get_scales(scale_initial=scale_initial,
-                                      scale_min=scale_min)
+                                      scale_min=scale_min,
+                                      scale_max=scale_max)
 
     def get_scales(self,
                    scale_initial=0.1,
@@ -115,8 +117,3 @@ class AnchorBox(object):
         output = torch.Tensor(boxes).view(-1, 4)
         output.clamp_(max=1, min=0)
         return output
-
-
-# if __name__ == '__main__':
-#     a = AnchorBox(new_size=300, config='SSD-300')
-#     print(a.get_scales())
