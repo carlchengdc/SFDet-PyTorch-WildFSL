@@ -96,15 +96,16 @@ def main(version, config, output_txt):
 
 if __name__ == '__main__':
     torch.set_printoptions(threshold=np.nan)
+    # torch.set_num_threads(2)
     parser = argparse.ArgumentParser()
 
     # dataset info
     parser.add_argument('--input_channels', type=int, default=3,
                         help='Number of input channels')
-    parser.add_argument('--class_count', type=int, default=21,
+    parser.add_argument('--class_count', type=int, default=11,
                         help='Number of classes in dataset')
-    parser.add_argument('--dataset', type=str, default='voc',
-                        choices=['voc', 'coco'],
+    parser.add_argument('--dataset', type=str, default='bdd',
+                        choices=['voc', 'coco', 'bdd'],
                         help='Dataset to use')
     parser.add_argument('--new_size', type=int, default=300,
                         help='New height and width of input images')
@@ -205,6 +206,14 @@ if __name__ == '__main__':
     parser.add_argument('--coco_data_path', type=str,
                         default='../../Datasets/Coco/',
                         help='COCO dataset path')
+
+    # bdd dataset
+    parser.add_argument('--bdd_version', type=str, default='100k',
+                        choices=['100k'],
+                        help='BDD dataset version')
+    parser.add_argument('--bdd_data_path', type=str,
+                        default='../../Datasets/bdd100k/',
+                        help='BDD dataset path')
 
     # path
     parser.add_argument('--model_save_path', type=str, default='./weights',

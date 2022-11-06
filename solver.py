@@ -16,7 +16,9 @@ from utils.timer import Timer
 from loss.loss import get_loss
 from models.model import get_model
 from layers.anchor_box import AnchorBox
+from data.bdd import save_results as bdd_save
 from data.coco import save_results as coco_save
+from data.bdd import do_python_eval as do_bdd_eval
 from data.pascal_voc import save_results as voc_save
 from data.pascal_voc import do_python_eval as do_voc_eval
 from pycocotools.cocoeval import COCOeval as do_coco_eval
@@ -503,6 +505,24 @@ class Solver(object):
             write_print(self.output_txt, '\nResults:')
             for val in coco_eval.stats:
                 write_print(self.output_txt, '{:.3f}'.format(val))
+
+        if self.dataset == 'bdd':
+            bdd_save(all_boxes=all_boxes,
+                     dataset=dataset,
+                     results_path=results_path,
+                     output_txt=self.output_txt)
+
+            aps, mAP = do_bdd_eval(results_path=results_path,
+                                   dataset=dataset,
+                                   output_txt=self.output_txt,
+                                   mode='test',
+                                   iou_threshold=self.iou_threshold,
+                                   use_07_metric=self.use_07_metric)
+
+            write_print(self.output_txt, '\nResults:')
+            for ap in aps:
+                write_print(self.output_txt, '{:.4f}'.format(ap))
+            write_print(self.output_txt, '{:.4f}'.format(np.mean(aps)))
 
         detect_times = np.asarray(detect_times)
         nms_times = np.asarray(nms_times)

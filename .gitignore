@@ -3,6 +3,7 @@ tests
 weights
 aug_test.py
 draw_boxes.py
+draw_boxes_cityscapes.py
 sample.py
 tester.py
 notes.txt
