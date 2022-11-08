@@ -96,16 +96,15 @@ def main(version, config, output_txt):
 
 if __name__ == '__main__':
     torch.set_printoptions(threshold=np.nan)
-    # torch.set_num_threads(2)
     parser = argparse.ArgumentParser()
 
     # dataset info
     parser.add_argument('--input_channels', type=int, default=3,
                         help='Number of input channels')
-    parser.add_argument('--class_count', type=int, default=11,
+    parser.add_argument('--class_count', type=int, default=7,
                         help='Number of classes in dataset')
-    parser.add_argument('--dataset', type=str, default='bdd',
-                        choices=['voc', 'coco', 'bdd'],
+    parser.add_argument('--dataset', type=str, default='cityscapes',
+                        choices=['voc', 'coco', 'bdd', 'cityscapes'],
                         help='Dataset to use')
     parser.add_argument('--new_size', type=int, default=300,
                         help='New height and width of input images')
@@ -117,9 +116,9 @@ if __name__ == '__main__':
                                  'STDN-300',
                                  'SFDet-300', 'SFDet-512'],
                         help='Anchor box configuration to use')
-    parser.add_argument('--scale_initial', type=float, default=0.1,  # .07 COCO
+    parser.add_argument('--scale_initial', type=float, default=0.07,  # .07 COCO
                         help='Initial scale of anchor boxes')
-    parser.add_argument('--scale_min', type=int, default=0.2,  # .15 COCO
+    parser.add_argument('--scale_min', type=int, default=0.15,  # .15 COCO
                         help='Minimum scale of anchor boxes in generation')
     parser.add_argument('--scale_max', type=int, default=1.05,  # 1.05 COCO
                         help='Maximum scale of anchor boxes in generation')
@@ -131,10 +130,10 @@ if __name__ == '__main__':
                         help='Momentum')
     parser.add_argument('--weight_decay', type=float, default=0.0005,
                         help='Weight decay')
-    parser.add_argument('--num_epochs', type=int, default=100,
+    parser.add_argument('--num_epochs', type=int, default=200,
                         help='Number of epochs')
     # 145, 182, 218 -> 160, 190, 220
-    parser.add_argument('--learning_sched', type=list, default=[],
+    parser.add_argument('--learning_sched', type=list, default=[150],
                         help='List of epochs to reduce the learning rate')
     parser.add_argument('--sched_gamma', type=float, default=0.1,
                         help='Adjustment gamma for each learning sched')
@@ -214,6 +213,11 @@ if __name__ == '__main__':
     parser.add_argument('--bdd_data_path', type=str,
                         default='../../Datasets/bdd100k/',
                         help='BDD dataset path')
+
+    # cityscapes dataset
+    parser.add_argument('--cityscapes_data_path', type=str,
+                        default='../../Datasets/Cityscapes/',
+                        help='Cityscapes dataset path')
 
     # path
     parser.add_argument('--model_save_path', type=str, default='./weights',

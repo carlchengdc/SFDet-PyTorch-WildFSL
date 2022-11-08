@@ -2,6 +2,7 @@ import torch
 from data.bdd import BDD
 from data.coco import COCO
 from data.pascal_voc import PascalVOC
+from data.cityscapes import Cityscapes
 from torch.utils.data import DataLoader
 from data.augmentations import Augmentations, BaseTransform
 
@@ -66,6 +67,12 @@ def get_loader(config):
                       new_size=new_size,
                       mode=config.mode,
                       image_transform=image_transform)
+
+    if config.dataset == 'cityscapes':
+        dataset = Cityscapes(data_path=config.cityscapes_data_path,
+                             new_size=new_size,
+                             mode=config.mode,
+                             image_transform=image_transform)
 
     if dataset is not None:
         if config.mode == 'train':
