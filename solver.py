@@ -179,7 +179,6 @@ class Solver(object):
 
         torch.save(self.model.state_dict(), path)
 
-
     # def model_step(self,
     #                images,
     #                targets,
@@ -290,6 +289,14 @@ class Solver(object):
 
         sched = 0
 
+        if self.warmup_epoch != 0:
+            self.lr /= 10
+            write_print(self.output_txt,
+                        'Learning rate reduced to ' + str(self.lr))
+            self.adjust_learning_rate(optimizer=self.optimizer,
+                                      gamma=self.sched_gamma,
+                                      step=sched)
+
         # start training
         start_time = time.time()
         for e in range(start, self.num_epochs):
@@ -316,6 +323,14 @@ class Solver(object):
             # save model
             if (e + 1) % self.model_save_step == 0:
                 self.save_model(e)
+
+            if self.warmup_epoch != 0 and (e + 1) == self.warmup_epoch:
+                self.lr *= 10
+                write_print(self.output_txt,
+                            'Learning rate increased to ' + str(self.lr))
+                self.adjust_learning_rate(optimizer=self.optimizer,
+                                          gamma=self.sched_gamma,
+                                          step=sched)
 
             num_sched = len(self.learning_sched)
             if num_sched != 0 and sched < num_sched:

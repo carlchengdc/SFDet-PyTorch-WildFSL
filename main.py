@@ -130,11 +130,13 @@ if __name__ == '__main__':
                         help='Momentum')
     parser.add_argument('--weight_decay', type=float, default=0.0005,
                         help='Weight decay')
-    parser.add_argument('--num_epochs', type=int, default=200,
+    parser.add_argument('--num_epochs', type=int, default=300,
                         help='Number of epochs')
     # 145, 182, 218 -> 160, 190, 220
-    parser.add_argument('--learning_sched', type=list, default=[150],
+    parser.add_argument('--learning_sched', type=list, default=[150, 250],
                         help='List of epochs to reduce the learning rate')
+    parser.add_argument('--warmup_epoch', type=int, default=0,
+                        help='Number of epochs for warmup')
     parser.add_argument('--sched_gamma', type=float, default=0.1,
                         help='Adjustment gamma for each learning sched')
     parser.add_argument('--batch_size', type=int, default=32,
@@ -143,14 +145,14 @@ if __name__ == '__main__':
                         help='Batch size multiplier')
 
     # architecture settings
-    parser.add_argument('--model', type=str, default='SFDet-VGG',
+    parser.add_argument('--model', type=str, default='SFDet-ResNet',
                         choices=['SFDet-VGG', 'SFDet-ResNet',
                                  'SFDet-DenseNet', 'SFDet-ResNeXt',
                                  'SSD', 'RSSD_1C', 'RSSD', 'STDN', 'STDN2'],
                         help='Model to use')
     parser.add_argument('--basenet', type=str, default='vgg16_reducedfc.pth',
                         help='Base network for VGG')
-    parser.add_argument('--resnet_model', type=str, default='18',
+    parser.add_argument('--resnet_model', type=str, default='101',
                         choices=['18', '34', '50', '101', '152'],
                         help='ResNet base network configuration')
     parser.add_argument('--densenet_model', type=str, default='121',
