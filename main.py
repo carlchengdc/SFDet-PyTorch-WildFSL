@@ -101,9 +101,9 @@ if __name__ == '__main__':
     # dataset info
     parser.add_argument('--input_channels', type=int, default=3,
                         help='Number of input channels')
-    parser.add_argument('--class_count', type=int, default=7,
+    parser.add_argument('--class_count', type=int, default=21,
                         help='Number of classes in dataset')
-    parser.add_argument('--dataset', type=str, default='cityscapes',
+    parser.add_argument('--dataset', type=str, default='voc',
                         choices=['voc', 'coco', 'bdd', 'cityscapes'],
                         help='Dataset to use')
     parser.add_argument('--new_size', type=int, default=300,
@@ -116,9 +116,9 @@ if __name__ == '__main__':
                                  'STDN-300',
                                  'SFDet-300', 'SFDet-512'],
                         help='Anchor box configuration to use')
-    parser.add_argument('--scale_initial', type=float, default=0.07,  # .07 COCO
+    parser.add_argument('--scale_initial', type=float, default=0.1,  # .07 COCO
                         help='Initial scale of anchor boxes')
-    parser.add_argument('--scale_min', type=int, default=0.15,  # .15 COCO
+    parser.add_argument('--scale_min', type=int, default=0.2,  # .15 COCO
                         help='Minimum scale of anchor boxes in generation')
     parser.add_argument('--scale_max', type=int, default=1.05,  # 1.05 COCO
                         help='Maximum scale of anchor boxes in generation')
@@ -130,10 +130,10 @@ if __name__ == '__main__':
                         help='Momentum')
     parser.add_argument('--weight_decay', type=float, default=0.0005,
                         help='Weight decay')
-    parser.add_argument('--num_epochs', type=int, default=300,
+    parser.add_argument('--num_epochs', type=int, default=220,
                         help='Number of epochs')
     # 145, 182, 218 -> 160, 190, 220
-    parser.add_argument('--learning_sched', type=list, default=[150, 250],
+    parser.add_argument('--learning_sched', type=list, default=[160, 190],
                         help='List of epochs to reduce the learning rate')
     parser.add_argument('--warmup_epoch', type=int, default=0,
                         help='Number of epochs for warmup')
@@ -152,7 +152,7 @@ if __name__ == '__main__':
                         help='Model to use')
     parser.add_argument('--basenet', type=str, default='vgg16_reducedfc.pth',
                         help='Base network for VGG')
-    parser.add_argument('--resnet_model', type=str, default='101',
+    parser.add_argument('--resnet_model', type=str, default='50',
                         choices=['18', '34', '50', '101', '152'],
                         help='ResNet base network configuration')
     parser.add_argument('--densenet_model', type=str, default='121',
@@ -164,6 +164,9 @@ if __name__ == '__main__':
     parser.add_argument('--pretrained_model', type=str,
                         default=None,
                         help='Pre-trained model')
+    parser.add_argument('--coco_weights', type=str,
+                        default=None,
+                        help='COCO trained weights')
 
     # loss settings
     parser.add_argument('--loss_config', type=str, default='multibox',

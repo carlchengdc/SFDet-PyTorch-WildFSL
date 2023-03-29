@@ -76,3 +76,16 @@ def draw_labels(image,
                             thickness=2)
 
     return image
+
+
+def load_pretrained_model(model,
+                          model_save_path,
+                          pretrained_model,
+                          output_txt):
+    """
+    loads a pre-trained model from a .pth file
+    """
+    model.load_state_dict(torch.load(os.path.join(
+        model_save_path, '{}.pth'.format(pretrained_model))))
+    write_print(output_txt,
+                'loaded trained model {}'.format(pretrained_model))

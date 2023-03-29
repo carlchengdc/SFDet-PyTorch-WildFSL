@@ -6,6 +6,7 @@ from layers.block import BasicConv
 from utils.init import xavier_init
 from layers.detection import Detect
 from backbone.vgg import VGG, base_config
+from utils.genutils import load_pretrained_model
 
 
 class SFDetVGG(nn.Module):
@@ -271,7 +272,10 @@ mbox_config = {
 def build_SFDetVGG(mode,
                    new_size,
                    anchors,
-                   class_count):
+                   class_count,
+                   model_save_path,
+                   pretrained_model,
+                   output_txt):
 
     base = VGG(config=base_config[str(new_size)],
                in_channels=3)
@@ -284,14 +288,36 @@ def build_SFDetVGG(mode,
 
     pyramid_module = get_pyramid_module(config=pyramid_config[str(new_size)])
 
-    head = multibox(config=mbox_config[str(new_size)],
-                    class_count=class_count)
+    if pretrained_model is not None:
+        head = multibox(config=mbox_config[str(new_size)],
+                        class_count=81)
+        model = SFDetVGG(mode=mode,
+                         base=base.layers,
+                         extras=extras,
+                         fusion_module=fusion_module,
+                         pyramid_module=pyramid_module,
+                         head=head,
+                         anchors=anchors,
+                         class_count=class_count)
+        load_pretrained_model(model=model,
+                              model_save_path=model_save_path,
+                              pretrained_model=pretrained_model,
+                              output_txt=output_txt)
+        head = multibox(config=mbox_config[str(new_size)],
+                        class_count=class_count)
+        model.class_head = nn.ModuleList(modules=head[0])
+        model.loc_head = nn.ModuleList(modules=head[1])
 
-    return SFDetVGG(mode=mode,
-                    base=base.layers,
-                    extras=extras,
-                    fusion_module=fusion_module,
-                    pyramid_module=pyramid_module,
-                    head=head,
-                    anchors=anchors,
-                    class_count=class_count)
+    else:
+        head = multibox(config=mbox_config[str(new_size)],
+                        class_count=class_count)
+        model = SFDetVGG(mode=mode,
+                         base=base.layers,
+                         extras=extras,
+                         fusion_module=fusion_module,
+                         pyramid_module=pyramid_module,
+                         head=head,
+                         anchors=anchors,
+                         class_count=class_count)
+
+    return model

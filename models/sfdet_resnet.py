@@ -3,6 +3,7 @@ import torch.nn as nn
 from layers.block import BasicConv
 from utils.init import xavier_init
 from layers.detection import Detect
+from utils.genutils import load_pretrained_model
 from torchvision.models import (resnet18, resnet34, resnet50,
                                 resnet101, resnet152)
 
@@ -219,7 +220,10 @@ def build_SFDetResNet(mode,
                       new_size,
                       resnet_model,
                       anchors,
-                      class_count):
+                      class_count,
+                      model_save_path,
+                      pretrained_model,
+                      output_txt):
 
     in_channels = fusion_in_channels['basic']
 
@@ -242,13 +246,34 @@ def build_SFDetResNet(mode,
 
     pyramid_module = get_pyramid_module(config=pyramid_config[str(new_size)])
 
-    head = multibox(config=mbox_config[str(new_size)],
-                    class_count=class_count)
+    if pretrained_model is not None:
+        head = multibox(config=mbox_config[str(new_size)],
+                        class_count=81)
+        model = SFDetResNet(mode=mode,
+                            base=base,
+                            fusion_module=fusion_module,
+                            pyramid_module=pyramid_module,
+                            head=head,
+                            anchors=anchors,
+                            class_count=class_count)
+        load_pretrained_model(model=model,
+                              model_save_path=model_save_path,
+                              pretrained_model=pretrained_model,
+                              output_txt=output_txt)
+        head = multibox(config=mbox_config[str(new_size)],
+                        class_count=class_count)
+        model.class_head = nn.ModuleList(modules=head[0])
+        model.loc_head = nn.ModuleList(modules=head[1])
 
-    return SFDetResNet(mode=mode,
-                       base=base,
-                       fusion_module=fusion_module,
-                       pyramid_module=pyramid_module,
-                       head=head,
-                       anchors=anchors,
-                       class_count=class_count)
+    else:
+        head = multibox(config=mbox_config[str(new_size)],
+                        class_count=class_count)
+        model = SFDetResNet(mode=mode,
+                            base=base,
+                            fusion_module=fusion_module,
+                            pyramid_module=pyramid_module,
+                            head=head,
+                            anchors=anchors,
+                            class_count=class_count)
+
+    return model

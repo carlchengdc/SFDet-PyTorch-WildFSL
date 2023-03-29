@@ -13,7 +13,9 @@ from models.sfdet_densenet import build_SFDetDenseNet
 # from torchvision.models.detection._utils import retrieve_out_channels
 
 
-def get_model(config, anchors):
+def get_model(config,
+              anchors,
+              output_txt):
     """
     returns the model
     """
@@ -24,14 +26,20 @@ def get_model(config, anchors):
         model = build_SFDetVGG(mode=config['mode'],
                                new_size=config['new_size'],
                                anchors=anchors,
-                               class_count=config['class_count'])
+                               class_count=config['class_count'],
+                               model_save_path=config['model_save_path'],
+                               pretrained_model=config['coco_weights'],
+                               output_txt=output_txt)
 
     elif config['model'] == 'SFDet-ResNet':
         model = build_SFDetResNet(mode=config['mode'],
                                   new_size=config['new_size'],
                                   resnet_model=config['resnet_model'],
                                   anchors=anchors,
-                                  class_count=config['class_count'])
+                                  class_count=config['class_count'],
+                                  model_save_path=config['model_save_path'],
+                                  pretrained_model=config['coco_weights'],
+                                  output_txt=output_txt)
 
     elif config['model'] == 'SFDet-DenseNet':
         model = build_SFDetDenseNet(mode=config['mode'],

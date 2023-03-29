@@ -10,7 +10,7 @@ import torch.optim as optim
 # from utils.nms_wrapper import nms
 from torchvision.ops import nms
 from torch.cuda.amp import GradScaler, autocast
-from utils.genutils import to_var, write_print, mkdir
+from utils.genutils import to_var, write_print, mkdir, load_pretrained_model
 
 from utils.timer import Timer
 from loss.loss import get_loss
@@ -49,9 +49,12 @@ class Solver(object):
         self.build_model()
 
         # start with a pre-trained model
-        if self.pretrained_model:
-            self.load_pretrained_model()
-        else:
+        if self.pretrained_model is not None:
+            load_pretrained_model(model=self.model,
+                                  model_save_path=self.model_save_path,
+                                  pretrained_model=self.pretrained_model,
+                                  output_txt=self.output_txt)
+        elif self.coco_weights is None:
             self.model.init_weights(self.model_save_path,
                                     self.basenet)
 
@@ -73,7 +76,8 @@ class Solver(object):
 
         # instatiate model
         self.model = get_model(config=self.config,
-                               anchors=self.anchor_boxes)
+                               anchors=self.anchor_boxes,
+                               output_txt=self.output_txt)
 
         # instatiate loss criterion
         self.criterion = get_loss(config=self.config)
@@ -105,14 +109,17 @@ class Solver(object):
         write_print(self.output_txt,
                     'The number of parameters: {}'.format(num_params))
 
-    def load_pretrained_model(self):
-        """
-        loads a pre-trained model from a .pth file
-        """
-        self.model.load_state_dict(torch.load(os.path.join(
-            self.model_save_path, '{}.pth'.format(self.pretrained_model))))
-        write_print(self.output_txt,
-                    'loaded trained model {}'.format(self.pretrained_model))
+    # def load_pretrained_model(self,
+    #                           model,
+    #                           model_save_path,
+    #                           pretrained_model):
+    #     """
+    #     loads a pre-trained model from a .pth file
+    #     """
+    #     model.load_state_dict(torch.load(os.path.join(
+    #         model_save_path, '{}.pth'.format(pretrained_model))))
+    #     write_print(self.output_txt,
+    #                 'loaded trained model {}'.format(pretrained_model))
 
     def adjust_learning_rate(self,
                              optimizer,
