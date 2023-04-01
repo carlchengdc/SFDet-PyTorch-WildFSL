@@ -9,7 +9,8 @@ import os.path as osp
 import torch.optim as optim
 # from utils.nms_wrapper import nms
 from torchvision.ops import nms
-from torch.cuda.amp import GradScaler, autocast
+# from torch.cuda.amp import GradScaler, autocast
+from torch.optim.lr_scheduler import MultiStepLR
 from utils.genutils import to_var, write_print, mkdir, load_pretrained_model
 
 from utils.timer import Timer
@@ -88,7 +89,9 @@ class Solver(object):
                                    momentum=self.momentum,
                                    weight_decay=self.weight_decay)
 
-        self.scaler = GradScaler()
+        self.scheduler = MultiStepLR(self.optimizer,
+                                     milestones=self.learning_sched,
+                                     gamma=self.sched_gamma)
 
         # print network
         self.print_network(self.model)
@@ -246,31 +249,31 @@ class Solver(object):
         # empty the gradients of the model through the optimizer
         self.optimizer.zero_grad()
 
-        with autocast():
+        # with autocast():
 
-            # forward pass
-            class_preds, loc_preds = self.model(images)
+        # forward pass
+        class_preds, loc_preds = self.model(images)
 
-            # compute loss
-            class_targets = [target[:, -1] for target in targets]
-            loc_targets = [target[:, :-1] for target in targets]
-            losses = self.criterion(class_preds=class_preds,
-                                    class_targets=class_targets,
-                                    loc_preds=loc_preds,
-                                    loc_targets=loc_targets,
-                                    anchors=self.anchor_boxes)
+        # compute loss
+        class_targets = [target[:, -1] for target in targets]
+        loc_targets = [target[:, :-1] for target in targets]
+        losses = self.criterion(class_preds=class_preds,
+                                class_targets=class_targets,
+                                loc_preds=loc_preds,
+                                loc_targets=loc_targets,
+                                anchors=self.anchor_boxes)
 
-            class_loss, loc_loss, loss = losses
+        class_loss, loc_loss, loss = losses
 
         # compute gradients using back propagation
-        # loss.backward()
-        self.scaler.scale(loss).backward()
+        loss.backward()
+        # self.scaler.scale(loss).backward()
 
         # update parameters
-        # self.optimizer.step()
-        self.scaler.step(self.optimizer)
+        self.optimizer.step()
+        # self.scaler.step(self.optimizer)
 
-        self.scaler.update()
+        # self.scaler.update()
 
         # return loss
         return class_loss, loc_loss, loss, count
@@ -315,6 +318,8 @@ class Solver(object):
                                                                     targets,
                                                                     count)
 
+            self.scheduler.step()
+
             # print out loss log
             if (e + 1) % self.loss_log_step == 0:
                 self.print_loss_log(start_time=start_time,
@@ -347,9 +352,9 @@ class Solver(object):
                     write_print(self.output_txt,
                                 'Learning rate reduced to ' + str(self.lr))
                     sched += 1
-                    self.adjust_learning_rate(optimizer=self.optimizer,
-                                              gamma=self.sched_gamma,
-                                              step=sched)
+                    # self.adjust_learning_rate(optimizer=self.optimizer,
+                    #                           gamma=self.sched_gamma,
+                    #                           step=sched)
 
         # print losses
         write_print(self.output_txt, '\n--Losses--')
