@@ -8,6 +8,7 @@ from models.sfdet_vgg import build_SFDetVGG
 from models.sfdet_resnet import build_SFDetResNet
 from models.sfdet_resnext import build_SFDetResNeXt
 from models.sfdet_densenet import build_SFDetDenseNet
+from models.sfdet_efficientnetv2 import build_SFDetEfficientNetV2
 # from torchvision.models.detection import ssd300_vgg16
 # from torchvision.models.detection.ssd import SSDHead
 # from torchvision.models.detection._utils import retrieve_out_channels
@@ -21,14 +22,16 @@ def get_model(config,
     """
 
     model = None
+    model_save_path = config['model_save_path']
+    pretrained_model = config['coco_weights']
 
     if config['model'] == 'SFDet-VGG':
         model = build_SFDetVGG(mode=config['mode'],
                                new_size=config['new_size'],
                                anchors=anchors,
                                class_count=config['class_count'],
-                               model_save_path=config['model_save_path'],
-                               pretrained_model=config['coco_weights'],
+                               model_save_path=model_save_path,
+                               pretrained_model=pretrained_model,
                                output_txt=output_txt)
 
     elif config['model'] == 'SFDet-ResNet':
@@ -37,8 +40,8 @@ def get_model(config,
                                   resnet_model=config['resnet_model'],
                                   anchors=anchors,
                                   class_count=config['class_count'],
-                                  model_save_path=config['model_save_path'],
-                                  pretrained_model=config['coco_weights'],
+                                  model_save_path=model_save_path,
+                                  pretrained_model=pretrained_model,
                                   output_txt=output_txt)
 
     elif config['model'] == 'SFDet-DenseNet':
@@ -54,6 +57,17 @@ def get_model(config,
                                    resnext_model=config['resnext_model'],
                                    anchors=anchors,
                                    class_count=config['class_count'])
+
+    elif config['model'] == 'SFDet-EfficientNetV2':
+        base_model = config['efficientnet_v2_model']
+        model = build_SFDetEfficientNetV2(mode=config['mode'],
+                                          new_size=config['new_size'],
+                                          efficientnet_v2_model=base_model,
+                                          anchors=anchors,
+                                          class_count=config['class_count'],
+                                          model_save_path=model_save_path,
+                                          pretrained_model=pretrained_model,
+                                          output_txt=output_txt)
 
     elif config['model'] == 'SSD':
         # num_classes = config['class_count']
