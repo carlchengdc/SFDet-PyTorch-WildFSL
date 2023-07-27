@@ -148,7 +148,7 @@ if __name__ == '__main__':
     parser.add_argument('--model', type=str, default='SFDet-VGG',
                         choices=['SFDet-VGG', 'SFDet-ResNet',
                                  'SFDet-DenseNet', 'SFDet-ResNeXt',
-                                 'SFDet-EfficientNetV2',
+                                 'SFDet-EfficientNetV2', 'SFDet-MobileNetV3',
                                  'SSD', 'RSSD_1C', 'RSSD', 'STDN', 'STDN2'],
                         help='Model to use')
     parser.add_argument('--basenet', type=str, default='vgg16_reducedfc.pth',
@@ -165,6 +165,9 @@ if __name__ == '__main__':
     parser.add_argument('--efficientnet_v2_model', type=str, default='s',
                         choices=['s', 'm', 'l'],
                         help='EfficientNet V2 base network configuration')
+    parser.add_argument('--mobilenet_v3_model', type=str, default='s',
+                        choices=['s', 'l'],
+                        help='MobileNet V3 base network configuration')
     parser.add_argument('--pretrained_model', type=str,
                         default=None,
                         help='Pre-trained model')

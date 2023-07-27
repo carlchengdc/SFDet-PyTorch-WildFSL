@@ -8,6 +8,7 @@ from models.sfdet_vgg import build_SFDetVGG
 from models.sfdet_resnet import build_SFDetResNet
 from models.sfdet_resnext import build_SFDetResNeXt
 from models.sfdet_densenet import build_SFDetDenseNet
+from models.sfdet_mobilenetv3 import build_SFDetMobileNetV3
 from models.sfdet_efficientnetv2 import build_SFDetEfficientNetV2
 # from torchvision.models.detection import ssd300_vgg16
 # from torchvision.models.detection.ssd import SSDHead
@@ -68,6 +69,17 @@ def get_model(config,
                                           model_save_path=model_save_path,
                                           pretrained_model=pretrained_model,
                                           output_txt=output_txt)
+
+    elif config['model'] == 'SFDet-MobileNetV3':
+        base_model = config['mobilenet_v3_model']
+        model = build_SFDetMobileNetV3(mode=config['mode'],
+                                       new_size=config['new_size'],
+                                       mobilenet_v3_model=base_model,
+                                       anchors=anchors,
+                                       class_count=config['class_count'],
+                                       model_save_path=model_save_path,
+                                       pretrained_model=pretrained_model,
+                                       output_txt=output_txt)
 
     elif config['model'] == 'SSD':
         # num_classes = config['class_count']
