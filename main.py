@@ -108,7 +108,7 @@ if __name__ == '__main__':
                         help='Dataset to use')
     # 300 x 300
     # 512 x 512
-    parser.add_argument('--new_size', type=int, default=512,
+    parser.add_argument('--new_size', type=int, default=300,
                         help='New height and width of input images')
     parser.add_argument('--means', type=tuple, default=(104, 117, 123),
                         help='Mean values of the dataset')
@@ -133,7 +133,7 @@ if __name__ == '__main__':
                         help='Momentum')
     parser.add_argument('--weight_decay', type=float, default=0.0005,
                         help='Weight decay')
-    parser.add_argument('--num_epochs', type=int, default=220,
+    parser.add_argument('--num_epochs', type=int, default=20,
                         help='Number of epochs')
     # 145, 182, 218 -> 160, 190, 220
     parser.add_argument('--learning_sched', type=list, default=[160, 190],
