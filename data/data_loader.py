@@ -3,6 +3,7 @@ from data.bdd import BDD
 from data.coco import COCO
 from data.pascal_voc import PascalVOC
 from data.cityscapes import Cityscapes
+from data.wildfsl import WildFSL
 from torch.utils.data import DataLoader
 from data.augmentations import Augmentations, BaseTransform
 
@@ -73,6 +74,12 @@ def get_loader(config):
                              new_size=new_size,
                              mode=config.mode,
                              image_transform=image_transform)
+
+    if config.dataset == 'wildfsl':
+        dataset = WildFSL(data_path=config.voc_data_path,
+                                new_size=new_size,
+                                mode=config.mode,
+                                image_transform=image_transform)
 
     if dataset is not None:
         if config.mode == 'train':

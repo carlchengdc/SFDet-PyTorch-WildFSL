@@ -101,15 +101,18 @@ if __name__ == '__main__':
     # dataset info
     parser.add_argument('--input_channels', type=int, default=3,
                         help='Number of input channels')
-    parser.add_argument('--class_count', type=int, default=21,
+    parser.add_argument('--class_count', type=int, default=28,
                         help='Number of classes in dataset')
-    parser.add_argument('--dataset', type=str, default='voc',
-                        choices=['voc', 'coco', 'bdd', 'cityscapes'],
+    parser.add_argument('--dataset', type=str, default='wildfsl',
+                        choices=['voc', 'coco', 'bdd', 'cityscapes', 'wildfsl'],
                         help='Dataset to use')
-    parser.add_argument('--new_size', type=int, default=300,
+    # 300 x 300
+    # 512 x 512
+    parser.add_argument('--new_size', type=int, default=512,
                         help='New height and width of input images')
     parser.add_argument('--means', type=tuple, default=(104, 117, 123),
                         help='Mean values of the dataset')
+    # SFDet-512
     parser.add_argument('--anchor_config', type=str, default='SFDet-300',
                         choices=['SSD-300', 'SSD-512',
                                  'RSSD-300', 'RSSD-512'
@@ -145,7 +148,7 @@ if __name__ == '__main__':
                         help='Batch size multiplier')
 
     # architecture settings
-    parser.add_argument('--model', type=str, default='SFDet-VGG',
+    parser.add_argument('--model', type=str, default='SFDet-ResNet',
                         choices=['SFDet-VGG', 'SFDet-ResNet',
                                  'SFDet-DenseNet', 'SFDet-ResNeXt',
                                  'SFDet-EfficientNetV2', 'SFDet-MobileNetV3',
@@ -153,7 +156,7 @@ if __name__ == '__main__':
                         help='Model to use')
     parser.add_argument('--basenet', type=str, default='vgg16_reducedfc.pth',
                         help='Base network for VGG')
-    parser.add_argument('--resnet_model', type=str, default='18',
+    parser.add_argument('--resnet_model', type=str, default='50',
                         choices=['18', '34', '50', '101', '152'],
                         help='ResNet base network configuration')
     parser.add_argument('--densenet_model', type=str, default='121',
